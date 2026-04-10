@@ -8,15 +8,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0d0d;
-    --surface: #141414;
-    --surface2: #1c1c1c;
-    --border: #2a2a2a;
-    --accent: #e8ff3b;
-    --accent2: #ff6b35;
-    --text: #f0f0f0;
-    --muted: #666;
-    --green: #3bffb0;
+    --bg:       #0d0d0d;
+    --surface:  #141414;
+    --surface2: #1e1e1e;
+    --border:   #333;
+    --accent:   #e8ff3b;
+    --accent2:  #ff6b35;
+    --text:     #f0f0f0;
+    --muted:    #888;
+    --green:    #3bffb0;
   }
 
 - { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,6 +29,7 @@ min-height: 100vh;
 padding: 2rem 1rem;
 }
 
+/* ── HEADER ── */
 header {
 text-align: center;
 margin-bottom: 3rem;
@@ -52,6 +53,7 @@ letter-spacing: 2px;
 text-transform: uppercase;
 }
 
+/* ── LAYOUT ── */
 .container {
 max-width: 900px;
 margin: 0 auto;
@@ -60,7 +62,7 @@ flex-direction: column;
 gap: 2rem;
 }
 
-/* ── SECTION CARD ── */
+/* ── CARDS ── */
 .card {
 background: var(–surface);
 border: 1px solid var(–border);
@@ -89,12 +91,13 @@ background: var(–accent);
 border-radius: 50%;
 }
 
-/* ── INPUTS ── */
+/* ── FIX 1: Kein Apostroph-Placeholder, echte Labels ── */
+/* FIX 2: Eingabefelder gleichmäßig aufgeteilt mit mehr Abstand */
 .input-row {
 display: grid;
 grid-template-columns: 1fr 1fr;
-gap: 1rem;
-margin-bottom: 1rem;
+gap: 2rem; /* erhöht von 1rem */
+margin-bottom: 1.5rem;
 }
 
 @media (max-width: 600px) {
@@ -107,10 +110,11 @@ font-size: 0.7rem;
 letter-spacing: 2px;
 text-transform: uppercase;
 color: var(–muted);
-margin-bottom: 0.4rem;
+margin-bottom: 0.5rem;
 }
 
-.field input, .field textarea {
+.field input,
+.field textarea {
 width: 100%;
 background: var(–surface2);
 border: 1px solid var(–border);
@@ -118,26 +122,34 @@ border-radius: 8px;
 color: var(–text);
 font-family: ‘Space Mono’, monospace;
 font-size: 1rem;
-padding: 0.75rem 1rem;
+padding: 0.85rem 1rem;
 outline: none;
 transition: border-color 0.2s;
 resize: none;
 }
 
-.field input:focus, .field textarea:focus {
+/* FIX 1: Placeholder ohne Apostrophe */
+.field input::placeholder,
+.field textarea::placeholder {
+color: var(–muted);
+font-style: normal;
+}
+
+.field input:focus,
+.field textarea:focus {
 border-color: var(–accent);
 }
 
 /* ── MODE TOGGLE ── */
 .toggle-row {
 display: flex;
-gap: 0.5rem;
-margin-bottom: 1.25rem;
+gap: 0.75rem;
+margin-bottom: 1.5rem;
 }
 
 .toggle-btn {
 flex: 1;
-padding: 0.6rem;
+padding: 0.7rem;
 border-radius: 8px;
 border: 1px solid var(–border);
 background: transparent;
@@ -156,138 +168,181 @@ border-color: var(–accent);
 font-weight: 700;
 }
 
-/* ── OUTPUT ── */
-.output-box {
+/* FIX 3 + 4: Ausgabefeld komplett überarbeitet — kein schwarzes Badge mehr,
+schöneres Layout, Kopieren-Button sauber unten rechts */
+.output-wrapper {
 background: var(–surface2);
 border: 1px solid var(–border);
-border-radius: 8px;
-padding: 1rem 1.25rem;
-min-height: 60px;
-font-size: 1.1rem;
-letter-spacing: 2px;
-word-break: break-all;
-color: var(–green);
-transition: all 0.3s;
-position: relative;
+border-radius: 10px;
+overflow: hidden;
 }
 
-.output-box.empty { color: var(–muted); font-size: 0.85rem; letter-spacing: 0; }
+.output-text {
+padding: 1rem 1.25rem;
+min-height: 64px;
+font-size: 1.1rem;
+letter-spacing: 3px;
+word-break: break-all;
+color: var(–green);
+line-height: 1.6;
+}
 
-/* ── STEPS VISUALIZATION ── */
+.output-text.empty {
+color: var(–muted);
+font-size: 0.85rem;
+letter-spacing: 0;
+font-style: italic;
+}
+
+.output-footer {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0.5rem 1rem;
+border-top: 1px solid var(–border);
+background: #181818;
+}
+
+.output-footer span {
+font-size: 0.65rem;
+color: var(–muted);
+letter-spacing: 1px;
+text-transform: uppercase;
+}
+
+.copy-btn {
+background: var(–border);
+border: 1px solid #444;
+border-radius: 6px;
+color: var(–text);
+font-family: ‘Space Mono’, monospace;
+font-size: 0.7rem;
+padding: 0.35rem 0.85rem;
+cursor: pointer;
+transition: all 0.2s;
+letter-spacing: 1px;
+}
+
+.copy-btn:hover {
+background: var(–accent);
+color: #000;
+border-color: var(–accent);
+}
+
+/* FIX 3: Badge weg – Schlüsselwiederholung als subtiler Hinweistext */
+.key-hint {
+font-size: 0.65rem;
+color: var(–accent);
+letter-spacing: 1px;
+margin-top: 0.4rem;
+min-height: 1rem;
+opacity: 0.8;
+}
+
+/* ── SCHRITT-VISUALISIERUNG ── */
 .steps-grid {
 display: grid;
-grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
-gap: 0.4rem;
+grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+gap: 0.5rem;
 margin-top: 0.75rem;
+}
+
+.hint-text {
+font-size: 0.75rem;
+color: var(–muted);
+margin-bottom: 0.75rem;
 }
 
 .step-cell {
 background: var(–surface2);
 border: 1px solid var(–border);
-border-radius: 6px;
-padding: 0.5rem 0.25rem;
+border-radius: 8px;
+padding: 0.6rem 0.25rem;
 text-align: center;
 font-size: 0.7rem;
-line-height: 1.6;
-transition: all 0.3s;
+line-height: 1.7;
+cursor: pointer;
+transition: all 0.2s;
 }
 
-.step-cell .plain  { color: var(–muted); font-size: 0.65rem; }
+.step-cell:hover { border-color: #555; }
+
+.step-cell .plain  { color: #aaa;          font-size: 0.65rem; }
 .step-cell .key    { color: var(–accent2); font-size: 0.65rem; }
-.step-cell .cipher { color: var(–green); font-weight: 700; font-size: 0.85rem; }
-.step-cell .op     { color: var(–muted); font-size: 0.55rem; }
+.step-cell .arrow  { color: #444;           font-size: 0.5rem; }
+.step-cell .cipher { color: var(–green);   font-weight: 700; font-size: 0.9rem; }
 
 .step-cell.active {
 border-color: var(–accent);
 background: #1e2200;
+box-shadow: 0 0 0 1px var(–accent);
 }
 
-/* ── VIGENÈRE TABLE ── */
+/* ── VIGENÈRE TABELLE ── */
 .table-wrapper {
 overflow-x: auto;
-margin-top: 0.5rem;
+margin-top: 0.75rem;
+border-radius: 8px;
+border: 1px solid var(–border);
 }
 
 .vig-table {
 border-collapse: collapse;
-font-size: 0.6rem;
+font-size: 0.62rem;
 line-height: 1;
 }
 
+/* FIX: Tabelle lesbar — kein Schwarz auf Schwarz mehr */
 .vig-table td {
-width: 20px; height: 20px;
+width: 22px; height: 22px;
 text-align: center;
 vertical-align: middle;
-border: 1px solid #1a1a1a;
-color: var(–muted);
-transition: all 0.15s;
+border: 1px solid #222;
+color: #777;
+transition: all 0.1s;
 }
 
 .vig-table td.header-cell {
-background: #1c1c1c;
-color: var(–text);
+background: #252525;
+color: #ccc;
 font-weight: 700;
-position: sticky;
 }
 
-.vig-table td.highlight-row { background: #1c1800; color: var(–accent); }
-.vig-table td.highlight-col { background: #001a10; color: var(–green); }
+.vig-table td.highlight-row {
+background: #2a2500;
+color: var(–accent);
+}
+
+.vig-table td.highlight-col {
+background: #002a1a;
+color: var(–green);
+}
+
 .vig-table td.highlight-cross {
 background: var(–accent);
 color: #000;
 font-weight: 700;
 font-size: 0.75rem;
-transform: scale(1.1);
-z-index: 1;
 position: relative;
+z-index: 1;
 }
 
-/* ── EXPLAIN BOX ── */
+/* ── ERKLÄRUNGSBOX ── */
 .explain {
-background: #1c1800;
-border: 1px solid #3a3300;
+background: #1e1e00;
+border: 1px solid #3a3a00;
 border-radius: 8px;
-padding: 0.75rem 1rem;
-font-size: 0.78rem;
+padding: 0.85rem 1.1rem;
+font-size: 0.8rem;
 color: #ccc;
-line-height: 1.7;
-margin-top: 0.75rem;
-min-height: 40px;
+line-height: 1.8;
+min-height: 44px;
 transition: all 0.3s;
 }
 
-.explain span.hl { color: var(–accent); font-weight: 700; }
+.explain span.hl  { color: var(–accent);  font-weight: 700; }
 .explain span.hl2 { color: var(–accent2); }
-.explain span.hl3 { color: var(–green); }
-
-/* ── COPY BUTTON ── */
-.copy-btn {
-position: absolute;
-top: 0.5rem; right: 0.5rem;
-background: var(–border);
-border: none;
-border-radius: 4px;
-color: var(–muted);
-font-family: ‘Space Mono’, monospace;
-font-size: 0.65rem;
-padding: 0.25rem 0.5rem;
-cursor: pointer;
-transition: all 0.2s;
-}
-
-.copy-btn:hover { background: var(–accent); color: #000; }
-
-.badge {
-display: inline-block;
-background: #1c1800;
-border: 1px solid #3a3300;
-color: var(–accent);
-font-size: 0.65rem;
-padding: 0.15rem 0.5rem;
-border-radius: 20px;
-letter-spacing: 1px;
-margin-top: 0.5rem;
-}
+.explain span.hl3 { color: var(–green);   }
 </style>
 
 </head>
@@ -300,7 +355,7 @@ margin-top: 0.5rem;
 
 <div class="container">
 
-  <!-- INPUT CARD -->
+  <!-- EINGABE CARD -->
 
   <div class="card">
     <div class="card-title">Eingabe</div>
@@ -314,41 +369,45 @@ margin-top: 0.5rem;
 <div class="input-row">
   <div class="field">
     <label id="inputLabel">Klartext</label>
-    <textarea id="plainInput" rows="3" placeholder="Text eingeben..." oninput="process()"></textarea>
+    <!-- FIX 1: Kein ``` als Placeholder mehr -->
+    <textarea id="plainInput" rows="3" placeholder="Text eingeben" oninput="process()"></textarea>
   </div>
   <div class="field">
     <label>Schlüsselwort</label>
     <input id="keyInput" type="text" placeholder="z.B. GEHEIM" oninput="process()" />
-    <div class="badge" id="keyExpanded"></div>
+    <!-- FIX 3: Badge ersetzt durch cleanen Hinweistext -->
+    <div class="key-hint" id="keyExpanded"></div>
   </div>
 </div>
 
 <div class="field">
   <label id="outputLabel">Geheimtext</label>
-  <div class="output-box empty" id="outputBox">
-    Ergebnis erscheint hier…
-    <button class="copy-btn" onclick="copyResult()">KOPIEREN</button>
+  <!-- FIX 4: Schöneres Ausgabefeld mit eigenem Footer für den Kopieren-Button -->
+  <div class="output-wrapper">
+    <div class="output-text empty" id="outputText">Ergebnis erscheint hier</div>
+    <div class="output-footer">
+      <span id="outputMeta">—</span>
+      <button class="copy-btn" onclick="copyResult()">📋 Kopieren</button>
+    </div>
   </div>
 </div>
 ```
 
   </div>
 
-  <!-- STEP-BY-STEP CARD -->
+  <!-- SCHRITT FÜR SCHRITT CARD -->
 
   <div class="card">
     <div class="card-title">Schritt für Schritt</div>
-    <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;">Jeder Buchstabe mit seinem Schlüsselbuchstaben und dem Ergebnis</p>
+    <p class="hint-text">Jeder Buchstabe mit seinem Schlüsselbuchstaben und dem Ergebnis</p>
     <div class="steps-grid" id="stepsGrid"></div>
   </div>
 
-  <!-- VIGENÈRE TABLE CARD -->
+  <!-- VIGENÈRE TABELLE CARD -->
 
   <div class="card">
     <div class="card-title">Vigenère-Tabelle</div>
-    <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem;">
-      Klicke auf einen Schritt oben, um die Zeile und Spalte in der Tabelle hervorzuheben.
-    </p>
+    <p class="hint-text">Klicke auf einen Schritt oben, um die Zeile und Spalte hervorzuheben.</p>
     <div class="explain" id="explainBox">
       Gib einen Text und ein Schlüsselwort ein, um die Visualisierung zu starten.
     </div>
@@ -361,8 +420,8 @@ margin-top: 0.5rem;
 
 <script>
 const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-let mode = 'encrypt';
-let steps = [];
+let mode       = 'encrypt';
+let steps      = [];
 let activeStep = -1;
 
 function setMode(m) {
@@ -395,7 +454,7 @@ function vigEncrypt(plain, key) {
     const ki = ALPHA.indexOf(kr[i]);
     const ci = (pi + ki) % 26;
     result += ALPHA[ci];
-    stepsArr.push({ plain: p[i], key: kr[i], cipher: ALPHA[ci], pi, ki, ci, op: `(${pi}+${ki})%26=${ci}` });
+    stepsArr.push({ plain: p[i], key: kr[i], cipher: ALPHA[ci], pi, ki, ci });
   }
   return { result, steps: stepsArr };
 }
@@ -410,21 +469,21 @@ function vigDecrypt(cipher, key) {
     const ki = ALPHA.indexOf(kr[i]);
     const pi = (ci - ki + 26) % 26;
     result += ALPHA[pi];
-    stepsArr.push({ plain: ALPHA[pi], key: kr[i], cipher: c[i], pi, ki, ci, op: `(${ci}-${ki}+26)%26=${pi}` });
+    stepsArr.push({ plain: ALPHA[pi], key: kr[i], cipher: c[i], pi, ki, ci });
   }
   return { result, steps: stepsArr };
 }
 
 function process() {
-  const text = document.getElementById('plainInput').value;
-  const key  = sanitize(document.getElementById('keyInput').value);
+  const text      = document.getElementById('plainInput').value;
+  const key       = sanitize(document.getElementById('keyInput').value);
   const cleanText = sanitize(text);
 
-  // Show expanded key
+  // Schlüsselwiederholung anzeigen (kein Badge mehr)
   const keyEl = document.getElementById('keyExpanded');
   if (key && cleanText) {
     const expanded = repeatKey(key, cleanText.length);
-    keyEl.textContent = expanded.length > 20 ? expanded.slice(0,20)+'…' : expanded;
+    keyEl.textContent = 'Schlüssel: ' + (expanded.length > 24 ? expanded.slice(0, 24) + '…' : expanded);
   } else {
     keyEl.textContent = '';
   }
@@ -433,23 +492,28 @@ function process() {
     ? vigEncrypt(text, key)
     : vigDecrypt(text, key);
 
-  steps = s;
+  steps      = s;
   activeStep = steps.length > 0 ? 0 : -1;
 
-  // Output
-  const outEl = document.getElementById('outputBox');
+  // Ausgabe updaten
+  const outText = document.getElementById('outputText');
+  const outMeta = document.getElementById('outputMeta');
+
   if (result) {
-    outEl.classList.remove('empty');
-    outEl.innerHTML = result + '<button class="copy-btn" onclick="copyResult()">KOPIEREN</button>';
+    outText.classList.remove('empty');
+    outText.textContent = result;
+    outMeta.textContent = result.length + ' Zeichen';
   } else {
-    outEl.classList.add('empty');
-    outEl.innerHTML = 'Ergebnis erscheint hier…<button class="copy-btn" onclick="copyResult()">KOPIEREN</button>';
+    outText.classList.add('empty');
+    outText.textContent = 'Ergebnis erscheint hier';
+    outMeta.textContent = '—';
   }
 
   renderSteps();
   if (activeStep >= 0) highlightStep(0);
   else {
-    document.getElementById('explainBox').innerHTML = 'Gib einen Text und ein Schlüsselwort ein, um die Visualisierung zu starten.';
+    document.getElementById('explainBox').innerHTML =
+      'Gib einen Text und ein Schlüsselwort ein, um die Visualisierung zu starten.';
     renderTable(-1, -1);
   }
 }
@@ -463,7 +527,7 @@ function renderSteps() {
     cell.innerHTML = `
       <div class="plain">${s.plain}</div>
       <div class="key">${s.key}</div>
-      <div style="font-size:0.5rem;color:#444">▼</div>
+      <div class="arrow">▼</div>
       <div class="cipher">${s.cipher}</div>
     `;
     cell.onclick = () => highlightStep(i);
@@ -473,26 +537,25 @@ function renderSteps() {
 
 function highlightStep(i) {
   activeStep = i;
-  // Update active cell styling
   document.querySelectorAll('.step-cell').forEach((el, idx) => {
     el.classList.toggle('active', idx === i);
   });
 
-  const s = steps[i];
-  // Explain text
+  const s       = steps[i];
   const explain = document.getElementById('explainBox');
+
   if (mode === 'encrypt') {
     explain.innerHTML = `
-      Buchstabe <span class="hl">${s.plain}</span> (Position <span class="hl">${s.pi}</span>) 
-      + Schlüssel <span class="hl2">${s.key}</span> (Position <span class="hl2">${s.ki}</span>) 
-      = <span class="hl3">(${s.pi} + ${s.ki}) mod 26 = ${s.ci}</span> 
+      Buchstabe <span class="hl">${s.plain}</span> (Position <span class="hl">${s.pi}</span>)
+      + Schlüssel <span class="hl2">${s.key}</span> (Position <span class="hl2">${s.ki}</span>)
+      = <span class="hl3">(${s.pi} + ${s.ki}) mod 26 = ${s.ci}</span>
       → <span class="hl3">${s.cipher}</span>
     `;
   } else {
     explain.innerHTML = `
-      Geheimtext <span class="hl">${s.cipher}</span> (Position <span class="hl">${s.ci}</span>) 
-      − Schlüssel <span class="hl2">${s.key}</span> (Position <span class="hl2">${s.ki}</span>) 
-      = <span class="hl3">(${s.ci} − ${s.ki} + 26) mod 26 = ${s.pi}</span> 
+      Geheimtext <span class="hl">${s.cipher}</span> (Position <span class="hl">${s.ci}</span>)
+      − Schlüssel <span class="hl2">${s.key}</span> (Position <span class="hl2">${s.ki}</span>)
+      = <span class="hl3">(${s.ci} − ${s.ki} + 26) mod 26 = ${s.pi}</span>
       → <span class="hl3">${s.plain}</span>
     `;
   }
@@ -503,6 +566,7 @@ function highlightStep(i) {
 function renderTable(rowIdx, colIdx) {
   const table = document.getElementById('vigTable');
   let html = '<tr><td class="header-cell"></td>';
+
   for (let c = 0; c < 26; c++) {
     html += `<td class="header-cell${c === colIdx ? ' highlight-col' : ''}">${ALPHA[c]}</td>`;
   }
@@ -512,14 +576,14 @@ function renderTable(rowIdx, colIdx) {
     const isRow = r === rowIdx;
     html += `<tr><td class="header-cell${isRow ? ' highlight-row' : ''}">${ALPHA[r]}</td>`;
     for (let c = 0; c < 26; c++) {
-      const letter = ALPHA[(r + c) % 26];
+      const letter  = ALPHA[(r + c) % 26];
       const isCross = isRow && c === colIdx;
-      const isR = isRow && !isCross;
-      const isC = c === colIdx && !isCross;
+      const isR     = isRow && !isCross;
+      const isC     = c === colIdx && !isCross;
       let cls = '';
-      if (isCross) cls = 'highlight-cross';
-      else if (isR)  cls = 'highlight-row';
-      else if (isC)  cls = 'highlight-col';
+      if      (isCross) cls = 'highlight-cross';
+      else if (isR)     cls = 'highlight-row';
+      else if (isC)     cls = 'highlight-col';
       html += `<td class="${cls}">${letter}</td>`;
     }
     html += '</tr>';
@@ -527,15 +591,19 @@ function renderTable(rowIdx, colIdx) {
   table.innerHTML = html;
 }
 
-// Init table on load
-renderTable(-1, -1);
-
 function copyResult() {
-  const text = document.getElementById('outputBox').textContent.replace('KOPIEREN','').trim();
-  if (text && text !== 'Ergebnis erscheint hier…') {
-    navigator.clipboard.writeText(text).catch(() => {});
+  const text = document.getElementById('outputText').textContent.trim();
+  if (text && text !== 'Ergebnis erscheint hier') {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '✅ Kopiert!';
+      setTimeout(() => btn.textContent = '📋 Kopieren', 1500);
+    }).catch(() => {});
   }
 }
+
+// Tabelle beim Laden initialisieren
+renderTable(-1, -1);
 </script>
 
 </body>
