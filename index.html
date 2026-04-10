@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -7,407 +7,519 @@
 <title>Vigenère Chiffre</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:       #0d0d0d;
-    --surface:  #141414;
-    --surface2: #1e1e1e;
-    --border:   #333;
-    --accent:   #e8ff3b;
-    --accent2:  #ff6b35;
-    --text:     #f0f0f0;
-    --muted:    #888;
-    --green:    #3bffb0;
-  }
+/* ── CSS VARIABLEN ── */
+:root {
+  --bg:        #0a0a0a;
+  --surface:   #111111;
+  --surface2:  #181818;
+  --surface3:  #202020;
+  --border:    #2e2e2e;
+  --border2:   #3a3a3a;
+  --accent:    #e8ff3b;
+  --accent2:   #ff6b35;
+  --text:      #f0f0f0;
+  --muted:     #666;
+  --muted2:    #999;
+  --green:     #3bffb0;
+  --glow:      rgba(232,255,59,0.12);
+}
 
-- { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── RESET ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
+/* ── BODY & SCROLLBAR ── */
 body {
-background: var(–bg);
-color: var(–text);
-font-family: ‘Space Mono’, monospace;
-min-height: 100vh;
-padding: 2rem 1rem;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  min-height: 100vh;
+  padding: 2.5rem 1.25rem 4rem;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ── HINTERGRUND-RAUSCHEN ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ── HEADER ── */
 header {
-text-align: center;
-margin-bottom: 3rem;
+  text-align: center;
+  margin-bottom: 3.5rem;
+  position: relative;
+  z-index: 1;
+  animation: fadeDown 0.6s ease both;
+}
+
+header::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: var(--accent);
+  margin: 1.5rem auto 0;
+  border-radius: 2px;
 }
 
 header h1 {
-font-family: ‘Syne’, sans-serif;
-font-size: clamp(2rem, 6vw, 4rem);
-font-weight: 800;
-letter-spacing: -2px;
-line-height: 1;
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.2rem, 7vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -3px;
+  line-height: 1;
 }
 
-header h1 span { color: var(–accent); }
+header h1 .accent-word {
+  color: var(--accent);
+  position: relative;
+}
 
-header p {
-color: var(–muted);
-font-size: 0.85rem;
-margin-top: 0.5rem;
-letter-spacing: 2px;
-text-transform: uppercase;
+header h1 .accent-word::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--accent);
+  opacity: 0.3;
+  border-radius: 2px;
+}
+
+header .subtitle {
+  color: var(--muted);
+  font-size: 0.75rem;
+  margin-top: 0.75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+header .subtitle .lz {
+  color: var(--accent2);
+  font-weight: 700;
 }
 
 /* ── LAYOUT ── */
 .container {
-max-width: 900px;
-margin: 0 auto;
-display: flex;
-flex-direction: column;
-gap: 2rem;
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  position: relative;
+  z-index: 1;
 }
 
 /* ── CARDS ── */
 .card {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 12px;
-padding: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  transition: border-color 0.3s;
+  animation: fadeUp 0.5s ease both;
+}
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+
+.card:hover {
+  border-color: var(--border2);
 }
 
 .card-title {
-font-family: ‘Syne’, sans-serif;
-font-size: 0.75rem;
-font-weight: 700;
-letter-spacing: 3px;
-text-transform: uppercase;
-color: var(–accent);
-margin-bottom: 1.25rem;
-display: flex;
-align-items: center;
-gap: 0.5rem;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
-.card-title::before {
-content: ‘’;
-display: inline-block;
-width: 8px; height: 8px;
-background: var(–accent);
-border-radius: 50%;
+.card-title .dot {
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px var(--accent);
 }
 
-/* ── FIX 1: Kein Apostroph-Placeholder, echte Labels ── */
-/* FIX 2: Eingabefelder gleichmäßig aufgeteilt mit mehr Abstand */
-.input-row {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 2rem; /* erhöht von 1rem */
-margin-bottom: 1.5rem;
-}
-
-@media (max-width: 600px) {
-.input-row { grid-template-columns: 1fr; }
-}
-
-.field label {
-display: block;
-font-size: 0.7rem;
-letter-spacing: 2px;
-text-transform: uppercase;
-color: var(–muted);
-margin-bottom: 0.5rem;
-}
-
-.field input,
-.field textarea {
-width: 100%;
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 8px;
-color: var(–text);
-font-family: ‘Space Mono’, monospace;
-font-size: 1rem;
-padding: 0.85rem 1rem;
-outline: none;
-transition: border-color 0.2s;
-resize: none;
-}
-
-/* FIX 1: Placeholder ohne Apostrophe */
-.field input::placeholder,
-.field textarea::placeholder {
-color: var(–muted);
-font-style: normal;
-}
-
-.field input:focus,
-.field textarea:focus {
-border-color: var(–accent);
-}
-
-/* ── MODE TOGGLE ── */
+/* ── TOGGLE BUTTONS ── */
 .toggle-row {
-display: flex;
-gap: 0.75rem;
-margin-bottom: 1.5rem;
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  background: var(--surface2);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
 }
 
 .toggle-btn {
-flex: 1;
-padding: 0.7rem;
-border-radius: 8px;
-border: 1px solid var(–border);
-background: transparent;
-color: var(–muted);
-font-family: ‘Space Mono’, monospace;
-font-size: 0.8rem;
-cursor: pointer;
-transition: all 0.2s;
-letter-spacing: 1px;
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted2);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+.toggle-btn:hover:not(.active) {
+  color: var(--text);
+  background: var(--surface3);
 }
 
 .toggle-btn.active {
-background: var(–accent);
-color: #000;
-border-color: var(–accent);
-font-weight: 700;
+  background: var(--accent);
+  color: #000;
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgba(232,255,59,0.25);
 }
 
-/* FIX 3 + 4: Ausgabefeld komplett überarbeitet — kein schwarzes Badge mehr,
-schöneres Layout, Kopieren-Button sauber unten rechts */
+/* ── INPUT GRID ── */
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 600px) {
+  .input-row { grid-template-columns: 1fr; }
+}
+
+/* ── FELDER ── */
+.field { display: flex; flex-direction: column; }
+
+.field label {
+  font-size: 0.65rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.field textarea,
+.field input[type="text"] {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.95rem;
+  padding: 0.85rem 1rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: none;
+  line-height: 1.5;
+}
+
+.field textarea::placeholder,
+.field input[type="text"]::placeholder {
+  color: var(--muted);
+}
+
+.field textarea:focus,
+.field input[type="text"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--glow);
+}
+
+/* ── SCHLÜSSEL-HINT ── */
+.key-hint {
+  font-size: 0.62rem;
+  color: var(--accent);
+  letter-spacing: 1.5px;
+  margin-top: 0.5rem;
+  min-height: 1rem;
+  opacity: 0.75;
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── AUSGABE-BEREICH ── */
 .output-wrapper {
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 10px;
-overflow: hidden;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.output-wrapper:has(.output-text:not(.empty)) {
+  border-color: rgba(59,255,176,0.3);
 }
 
 .output-text {
-padding: 1rem 1.25rem;
-min-height: 64px;
-font-size: 1.1rem;
-letter-spacing: 3px;
-word-break: break-all;
-color: var(–green);
-line-height: 1.6;
+  padding: 1rem 1.25rem;
+  min-height: 64px;
+  font-size: 1.05rem;
+  letter-spacing: 3px;
+  word-break: break-all;
+  color: var(--green);
+  line-height: 1.7;
 }
 
 .output-text.empty {
-color: var(–muted);
-font-size: 0.85rem;
-letter-spacing: 0;
-font-style: italic;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.5px;
+  font-style: italic;
 }
 
 .output-footer {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 0.5rem 1rem;
-border-top: 1px solid var(–border);
-background: #181818;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--border);
+  background: #131313;
 }
 
-.output-footer span {
-font-size: 0.65rem;
-color: var(–muted);
-letter-spacing: 1px;
-text-transform: uppercase;
+.output-meta {
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
 .copy-btn {
-background: var(–border);
-border: 1px solid #444;
-border-radius: 6px;
-color: var(–text);
-font-family: ‘Space Mono’, monospace;
-font-size: 0.7rem;
-padding: 0.35rem 0.85rem;
-cursor: pointer;
-transition: all 0.2s;
-letter-spacing: 1px;
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  color: var(--muted2);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
 }
 
 .copy-btn:hover {
-background: var(–accent);
-color: #000;
-border-color: var(–accent);
-}
-
-/* FIX 3: Badge weg – Schlüsselwiederholung als subtiler Hinweistext */
-.key-hint {
-font-size: 0.65rem;
-color: var(–accent);
-letter-spacing: 1px;
-margin-top: 0.4rem;
-min-height: 1rem;
-opacity: 0.8;
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(232,255,59,0.2);
 }
 
 /* ── SCHRITT-VISUALISIERUNG ── */
-.steps-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-gap: 0.5rem;
-margin-top: 0.75rem;
+.hint-text {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  line-height: 1.5;
 }
 
-.hint-text {
-font-size: 0.75rem;
-color: var(–muted);
-margin-bottom: 0.75rem;
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  gap: 0.45rem;
 }
 
 .step-cell {
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 8px;
-padding: 0.6rem 0.25rem;
-text-align: center;
-font-size: 0.7rem;
-line-height: 1.7;
-cursor: pointer;
-transition: all 0.2s;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.6rem 0.2rem;
+  text-align: center;
+  line-height: 1.75;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
 }
 
-.step-cell:hover { border-color: #555; }
-
-.step-cell .plain  { color: #aaa;          font-size: 0.65rem; }
-.step-cell .key    { color: var(–accent2); font-size: 0.65rem; }
-.step-cell .arrow  { color: #444;           font-size: 0.5rem; }
-.step-cell .cipher { color: var(–green);   font-weight: 700; font-size: 0.9rem; }
+.step-cell:hover {
+  border-color: var(--border2);
+  background: var(--surface3);
+  transform: translateY(-1px);
+}
 
 .step-cell.active {
-border-color: var(–accent);
-background: #1e2200;
-box-shadow: 0 0 0 1px var(–accent);
+  border-color: var(--accent);
+  background: #1c2000;
+  box-shadow: 0 0 0 1px var(--accent), 0 4px 16px rgba(232,255,59,0.1);
 }
 
-/* ── VIGENÈRE TABELLE ── */
+.step-cell .plain  { color: var(--muted2);   font-size: 0.62rem; display: block; }
+.step-cell .key    { color: var(--accent2);   font-size: 0.62rem; display: block; }
+.step-cell .arrow  { color: #444;             font-size: 0.48rem; display: block; }
+.step-cell .cipher { color: var(--green);     font-weight: 700;   font-size: 0.88rem; display: block; }
+
+/* ── VIGENÈRE TABELLE CARD ── */
+.explain {
+  background: #171700;
+  border: 1px solid #2e2b00;
+  border-radius: 10px;
+  padding: 0.85rem 1.1rem;
+  font-size: 0.78rem;
+  color: #ccc;
+  line-height: 1.85;
+  margin-bottom: 1rem;
+  min-height: 44px;
+  transition: all 0.25s;
+}
+
+.explain span.hl  { color: var(--accent);  font-weight: 700; }
+.explain span.hl2 { color: var(--accent2); font-weight: 700; }
+.explain span.hl3 { color: var(--green);   font-weight: 700; }
+
 .table-wrapper {
-overflow-x: auto;
-margin-top: 0.75rem;
-border-radius: 8px;
-border: 1px solid var(–border);
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
 }
 
 .vig-table {
-border-collapse: collapse;
-font-size: 0.62rem;
-line-height: 1;
+  border-collapse: collapse;
+  font-size: 0.58rem;
+  line-height: 1;
+  width: 100%;
 }
 
-/* FIX: Tabelle lesbar — kein Schwarz auf Schwarz mehr */
 .vig-table td {
-width: 22px; height: 22px;
-text-align: center;
-vertical-align: middle;
-border: 1px solid #222;
-color: #777;
-transition: all 0.1s;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid #1e1e1e;
+  color: #555;
+  transition: all 0.1s;
 }
 
 .vig-table td.header-cell {
-background: #252525;
-color: #ccc;
-font-weight: 700;
+  background: #1a1a1a;
+  color: #aaa;
+  font-weight: 700;
+  font-size: 0.6rem;
 }
 
 .vig-table td.highlight-row {
-background: #2a2500;
-color: var(–accent);
+  background: #201e00;
+  color: var(--accent);
 }
 
 .vig-table td.highlight-col {
-background: #002a1a;
-color: var(–green);
+  background: #001e12;
+  color: var(--green);
 }
 
 .vig-table td.highlight-cross {
-background: var(–accent);
-color: #000;
-font-weight: 700;
-font-size: 0.75rem;
-position: relative;
-z-index: 1;
+  background: var(--accent);
+  color: #000;
+  font-weight: 700;
+  font-size: 0.7rem;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 1;
 }
 
-/* ── ERKLÄRUNGSBOX ── */
-.explain {
-background: #1e1e00;
-border: 1px solid #3a3a00;
-border-radius: 8px;
-padding: 0.85rem 1.1rem;
-font-size: 0.8rem;
-color: #ccc;
-line-height: 1.8;
-min-height: 44px;
-transition: all 0.3s;
+/* ── ANIMATIONEN ── */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.explain span.hl  { color: var(–accent);  font-weight: 700; }
-.explain span.hl2 { color: var(–accent2); }
-.explain span.hl3 { color: var(–green);   }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+footer span { color: var(--accent); }
 </style>
-
 </head>
 <body>
 
 <header>
-  <h1>Vigenère <span>Chiffre</span></h1>
-  <p>Polyalphabetische Substitution · Lernziel 5</p>
+  <h1>Vigenère <span class="accent-word">Chiffre</span></h1>
+  <p class="subtitle">Polyalphabetische Substitution &middot; <span class="lz">Lernziel 5</span></p>
 </header>
 
 <div class="container">
 
-  <!-- EINGABE CARD -->
-
+  <!-- ══ EINGABE CARD ══ -->
   <div class="card">
-    <div class="card-title">Eingabe</div>
+    <div class="card-title"><span class="dot"></span>Eingabe</div>
 
-```
-<div class="toggle-row">
-  <button class="toggle-btn active" id="encBtn" onclick="setMode('encrypt')">🔒 Verschlüsseln</button>
-  <button class="toggle-btn" id="decBtn" onclick="setMode('decrypt')">🔓 Entschlüsseln</button>
-</div>
+    <div class="toggle-row">
+      <button class="toggle-btn active" id="encBtn" onclick="setMode('encrypt')">🔒 Verschlüsseln</button>
+      <button class="toggle-btn"        id="decBtn" onclick="setMode('decrypt')">🔓 Entschlüsseln</button>
+    </div>
 
-<div class="input-row">
-  <div class="field">
-    <label id="inputLabel">Klartext</label>
-    <!-- FIX 1: Kein ``` als Placeholder mehr -->
-    <textarea id="plainInput" rows="3" placeholder="Text eingeben" oninput="process()"></textarea>
-  </div>
-  <div class="field">
-    <label>Schlüsselwort</label>
-    <input id="keyInput" type="text" placeholder="z.B. GEHEIM" oninput="process()" />
-    <!-- FIX 3: Badge ersetzt durch cleanen Hinweistext -->
-    <div class="key-hint" id="keyExpanded"></div>
-  </div>
-</div>
+    <div class="input-row">
+      <div class="field">
+        <label id="inputLabel">Klartext</label>
+        <textarea id="plainInput" rows="3" placeholder="Text eingeben …" oninput="process()"></textarea>
+      </div>
+      <div class="field">
+        <label>Schlüsselwort</label>
+        <input id="keyInput" type="text" placeholder="z. B. GEHEIM" oninput="process()" />
+        <div class="key-hint" id="keyExpanded"></div>
+      </div>
+    </div>
 
-<div class="field">
-  <label id="outputLabel">Geheimtext</label>
-  <!-- FIX 4: Schöneres Ausgabefeld mit eigenem Footer für den Kopieren-Button -->
-  <div class="output-wrapper">
-    <div class="output-text empty" id="outputText">Ergebnis erscheint hier</div>
-    <div class="output-footer">
-      <span id="outputMeta">—</span>
-      <button class="copy-btn" onclick="copyResult()">📋 Kopieren</button>
+    <div class="field">
+      <label id="outputLabel">Geheimtext</label>
+      <div class="output-wrapper">
+        <div class="output-text empty" id="outputText">Ergebnis erscheint hier …</div>
+        <div class="output-footer">
+          <span class="output-meta" id="outputMeta">—</span>
+          <button class="copy-btn" id="copyBtn" onclick="copyResult()">📋 Kopieren</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-```
 
-  </div>
-
-  <!-- SCHRITT FÜR SCHRITT CARD -->
-
+  <!-- ══ SCHRITT FÜR SCHRITT CARD ══ -->
   <div class="card">
-    <div class="card-title">Schritt für Schritt</div>
-    <p class="hint-text">Jeder Buchstabe mit seinem Schlüsselbuchstaben und dem Ergebnis</p>
+    <div class="card-title"><span class="dot"></span>Schritt für Schritt</div>
+    <p class="hint-text">Klicke auf eine Kachel, um den Buchstaben in der Tabelle hervorzuheben.</p>
     <div class="steps-grid" id="stepsGrid"></div>
   </div>
 
-  <!-- VIGENÈRE TABELLE CARD -->
-
+  <!-- ══ VIGENÈRE TABELLE CARD ══ -->
   <div class="card">
-    <div class="card-title">Vigenère-Tabelle</div>
-    <p class="hint-text">Klicke auf einen Schritt oben, um die Zeile und Spalte hervorzuheben.</p>
+    <div class="card-title"><span class="dot"></span>Vigenère-Tabelle</div>
     <div class="explain" id="explainBox">
       Gib einen Text und ein Schlüsselwort ein, um die Visualisierung zu starten.
     </div>
@@ -418,12 +530,20 @@ transition: all 0.3s;
 
 </div>
 
+<footer>
+  Vigenère Chiffre &mdash; <span>5-Minuten Krypto</span>
+</footer>
+
 <script>
+// ── KONSTANTEN ──
 const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+// ── ZUSTAND ──
 let mode       = 'encrypt';
 let steps      = [];
 let activeStep = -1;
 
+// ── MODUS WECHSELN ──
 function setMode(m) {
   mode = m;
   document.getElementById('encBtn').classList.toggle('active', m === 'encrypt');
@@ -433,6 +553,7 @@ function setMode(m) {
   process();
 }
 
+// ── HILFSFUNKTIONEN ──
 function sanitize(str) {
   return str.toUpperCase().replace(/[^A-Z]/g, '');
 }
@@ -444,11 +565,16 @@ function repeatKey(key, len) {
   return out.slice(0, len);
 }
 
+// ── VERSCHLÜSSELN ──
 function vigEncrypt(plain, key) {
-  const p = sanitize(plain), k = sanitize(key);
+  const p = sanitize(plain);
+  const k = sanitize(key);
   if (!p || !k) return { result: '', steps: [] };
+
   const kr = repeatKey(k, p.length);
-  let result = '', stepsArr = [];
+  let result = '';
+  const stepsArr = [];
+
   for (let i = 0; i < p.length; i++) {
     const pi = ALPHA.indexOf(p[i]);
     const ki = ALPHA.indexOf(kr[i]);
@@ -456,14 +582,20 @@ function vigEncrypt(plain, key) {
     result += ALPHA[ci];
     stepsArr.push({ plain: p[i], key: kr[i], cipher: ALPHA[ci], pi, ki, ci });
   }
+
   return { result, steps: stepsArr };
 }
 
+// ── ENTSCHLÜSSELN ──
 function vigDecrypt(cipher, key) {
-  const c = sanitize(cipher), k = sanitize(key);
+  const c = sanitize(cipher);
+  const k = sanitize(key);
   if (!c || !k) return { result: '', steps: [] };
+
   const kr = repeatKey(k, c.length);
-  let result = '', stepsArr = [];
+  let result = '';
+  const stepsArr = [];
+
   for (let i = 0; i < c.length; i++) {
     const ci = ALPHA.indexOf(c[i]);
     const ki = ALPHA.indexOf(kr[i]);
@@ -471,19 +603,21 @@ function vigDecrypt(cipher, key) {
     result += ALPHA[pi];
     stepsArr.push({ plain: ALPHA[pi], key: kr[i], cipher: c[i], pi, ki, ci });
   }
+
   return { result, steps: stepsArr };
 }
 
+// ── HAUPTVERARBEITUNG ──
 function process() {
   const text      = document.getElementById('plainInput').value;
   const key       = sanitize(document.getElementById('keyInput').value);
   const cleanText = sanitize(text);
 
-  // Schlüsselwiederholung anzeigen (kein Badge mehr)
+  // Erweiterter Schlüssel als Hinweis
   const keyEl = document.getElementById('keyExpanded');
   if (key && cleanText) {
     const expanded = repeatKey(key, cleanText.length);
-    keyEl.textContent = 'Schlüssel: ' + (expanded.length > 24 ? expanded.slice(0, 24) + '…' : expanded);
+    keyEl.textContent = 'Erweitert: ' + (expanded.length > 26 ? expanded.slice(0, 26) + '…' : expanded);
   } else {
     keyEl.textContent = '';
   }
@@ -495,7 +629,7 @@ function process() {
   steps      = s;
   activeStep = steps.length > 0 ? 0 : -1;
 
-  // Ausgabe updaten
+  // Ausgabe rendern
   const outText = document.getElementById('outputText');
   const outMeta = document.getElementById('outputMeta');
 
@@ -505,38 +639,43 @@ function process() {
     outMeta.textContent = result.length + ' Zeichen';
   } else {
     outText.classList.add('empty');
-    outText.textContent = 'Ergebnis erscheint hier';
+    outText.textContent = 'Ergebnis erscheint hier …';
     outMeta.textContent = '—';
   }
 
   renderSteps();
-  if (activeStep >= 0) highlightStep(0);
-  else {
+
+  if (activeStep >= 0) {
+    highlightStep(0);
+  } else {
     document.getElementById('explainBox').innerHTML =
       'Gib einen Text und ein Schlüsselwort ein, um die Visualisierung zu starten.';
     renderTable(-1, -1);
   }
 }
 
+// ── SCHRITT-KACHELN RENDERN ──
 function renderSteps() {
   const grid = document.getElementById('stepsGrid');
   grid.innerHTML = '';
+
   steps.forEach((s, i) => {
     const cell = document.createElement('div');
     cell.className = 'step-cell' + (i === activeStep ? ' active' : '');
-    cell.innerHTML = `
-      <div class="plain">${s.plain}</div>
-      <div class="key">${s.key}</div>
-      <div class="arrow">▼</div>
-      <div class="cipher">${s.cipher}</div>
-    `;
+    cell.innerHTML =
+      '<span class="plain">'  + s.plain  + '</span>' +
+      '<span class="key">'    + s.key    + '</span>' +
+      '<span class="arrow">▼</span>' +
+      '<span class="cipher">' + s.cipher + '</span>';
     cell.onclick = () => highlightStep(i);
     grid.appendChild(cell);
   });
 }
 
+// ── SCHRITT HERVORHEBEN ──
 function highlightStep(i) {
   activeStep = i;
+
   document.querySelectorAll('.step-cell').forEach((el, idx) => {
     el.classList.toggle('active', idx === i);
   });
@@ -545,64 +684,72 @@ function highlightStep(i) {
   const explain = document.getElementById('explainBox');
 
   if (mode === 'encrypt') {
-    explain.innerHTML = `
-      Buchstabe <span class="hl">${s.plain}</span> (Position <span class="hl">${s.pi}</span>)
-      + Schlüssel <span class="hl2">${s.key}</span> (Position <span class="hl2">${s.ki}</span>)
-      = <span class="hl3">(${s.pi} + ${s.ki}) mod 26 = ${s.ci}</span>
-      → <span class="hl3">${s.cipher}</span>
-    `;
+    explain.innerHTML =
+      'Buchstabe <span class="hl">' + s.plain + '</span> (Pos. <span class="hl">' + s.pi + '</span>) ' +
+      '+ Schlüssel <span class="hl2">' + s.key + '</span> (Pos. <span class="hl2">' + s.ki + '</span>) ' +
+      '= <span class="hl3">(' + s.pi + ' + ' + s.ki + ') mod 26 = ' + s.ci + '</span> ' +
+      '&rarr; <span class="hl3">' + s.cipher + '</span>';
   } else {
-    explain.innerHTML = `
-      Geheimtext <span class="hl">${s.cipher}</span> (Position <span class="hl">${s.ci}</span>)
-      − Schlüssel <span class="hl2">${s.key}</span> (Position <span class="hl2">${s.ki}</span>)
-      = <span class="hl3">(${s.ci} − ${s.ki} + 26) mod 26 = ${s.pi}</span>
-      → <span class="hl3">${s.plain}</span>
-    `;
+    explain.innerHTML =
+      'Geheimtext <span class="hl">' + s.cipher + '</span> (Pos. <span class="hl">' + s.ci + '</span>) ' +
+      '&minus; Schlüssel <span class="hl2">' + s.key + '</span> (Pos. <span class="hl2">' + s.ki + '</span>) ' +
+      '= <span class="hl3">(' + s.ci + ' &minus; ' + s.ki + ' + 26) mod 26 = ' + s.pi + '</span> ' +
+      '&rarr; <span class="hl3">' + s.plain + '</span>';
   }
 
   renderTable(s.ki, mode === 'encrypt' ? s.pi : s.ci);
 }
 
+// ── VIGENÈRE-TABELLE RENDERN ──
 function renderTable(rowIdx, colIdx) {
   const table = document.getElementById('vigTable');
   let html = '<tr><td class="header-cell"></td>';
 
   for (let c = 0; c < 26; c++) {
-    html += `<td class="header-cell${c === colIdx ? ' highlight-col' : ''}">${ALPHA[c]}</td>`;
+    const cls = c === colIdx ? ' highlight-col' : '';
+    html += '<td class="header-cell' + cls + '">' + ALPHA[c] + '</td>';
   }
   html += '</tr>';
 
   for (let r = 0; r < 26; r++) {
     const isRow = r === rowIdx;
-    html += `<tr><td class="header-cell${isRow ? ' highlight-row' : ''}">${ALPHA[r]}</td>`;
+    html += '<tr><td class="header-cell' + (isRow ? ' highlight-row' : '') + '">' + ALPHA[r] + '</td>';
+
     for (let c = 0; c < 26; c++) {
       const letter  = ALPHA[(r + c) % 26];
       const isCross = isRow && c === colIdx;
       const isR     = isRow && !isCross;
       const isC     = c === colIdx && !isCross;
+
       let cls = '';
       if      (isCross) cls = 'highlight-cross';
       else if (isR)     cls = 'highlight-row';
       else if (isC)     cls = 'highlight-col';
-      html += `<td class="${cls}">${letter}</td>`;
+
+      html += '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + letter + '</td>';
     }
     html += '</tr>';
   }
+
   table.innerHTML = html;
 }
 
+// ── KOPIEREN ──
 function copyResult() {
   const text = document.getElementById('outputText').textContent.trim();
-  if (text && text !== 'Ergebnis erscheint hier') {
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.querySelector('.copy-btn');
-      btn.textContent = '✅ Kopiert!';
-      setTimeout(() => btn.textContent = '📋 Kopieren', 1500);
-    }).catch(() => {});
-  }
+  const btn  = document.getElementById('copyBtn');
+  if (!text || text.startsWith('Ergebnis')) return;
+
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ Kopiert!';
+    setTimeout(() => { btn.textContent = '📋 Kopieren'; }, 1600);
+  }).catch(() => {
+    btn.textContent = '❌ Fehler';
+    setTimeout(() => { btn.textContent = '📋 Kopieren'; }, 1600);
+  });
 }
 
-// Tabelle beim Laden initialisieren
+// ── INIT: leere Tabelle beim Laden ──
 renderTable(-1, -1);
 </script>
 
