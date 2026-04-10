@@ -1,0 +1,313 @@
+/* ── CSS VARIABLEN (Farben & Schriften zentral definiert) ── */
+:root {
+  --bg:       #0d0d0d;
+  --surface:  #141414;
+  --surface2: #1c1c1c;
+  --border:   #2a2a2a;
+  --accent:   #e8ff3b;
+  --accent2:  #ff6b35;
+  --text:     #f0f0f0;
+  --muted:    #666;
+  --green:    #3bffb0;
+}
+
+/* ── RESET & BASIS ── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+header h1 span {
+  color: var(--accent);
+}
+
+header p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── LAYOUT ── */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.75rem;
+}
+
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-title::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* ── HILFSTEXT ── */
+.hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+/* ── EINGABEFELDER ── */
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 600px) {
+  .input-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field label {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+  resize: none;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--accent);
+}
+
+/* ── MODUS-TOGGLE ── */
+.toggle-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+
+.toggle-btn.active {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+/* ── AUSGABE ── */
+.output-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  min-height: 60px;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  word-break: break-all;
+  color: var(--green);
+  transition: all 0.3s;
+  position: relative;
+}
+
+.output-box.empty {
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0;
+}
+
+/* ── SCHRITT-VISUALISIERUNG ── */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.step-cell {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.25rem;
+  text-align: center;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.step-cell .plain  { color: var(--muted);   font-size: 0.65rem; }
+.step-cell .key    { color: var(--accent2);  font-size: 0.65rem; }
+.step-cell .cipher { color: var(--green);    font-weight: 700; font-size: 0.85rem; }
+.step-cell .arrow  { font-size: 0.5rem;      color: #444; }
+
+.step-cell.active {
+  border-color: var(--accent);
+  background: #1e2200;
+}
+
+/* ── VIGENÈRE TABELLE ── */
+.table-wrapper {
+  overflow-x: auto;
+  margin-top: 0.5rem;
+}
+
+.vig-table {
+  border-collapse: collapse;
+  font-size: 0.6rem;
+  line-height: 1;
+}
+
+.vig-table td {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid #1a1a1a;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+
+.vig-table td.header-cell {
+  background: #1c1c1c;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.vig-table td.highlight-row   { background: #1c1800; color: var(--accent); }
+.vig-table td.highlight-col   { background: #001a10; color: var(--green); }
+.vig-table td.highlight-cross {
+  background: var(--accent);
+  color: #000;
+  font-weight: 700;
+  font-size: 0.75rem;
+  position: relative;
+  z-index: 1;
+  transform: scale(1.1);
+}
+
+/* ── ERKLÄRUNGSBOX ── */
+.explain {
+  background: #1c1800;
+  border: 1px solid #3a3300;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.78rem;
+  color: #ccc;
+  line-height: 1.7;
+  margin-top: 0.75rem;
+  min-height: 40px;
+  transition: all 0.3s;
+}
+
+.explain span.hl  { color: var(--accent);  font-weight: 700; }
+.explain span.hl2 { color: var(--accent2); }
+.explain span.hl3 { color: var(--green);   }
+
+/* ── KOPIEREN-BUTTON ── */
+.copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: var(--border);
+  border: none;
+  border-radius: 4px;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+/* ── SCHLÜSSEL-BADGE ── */
+.badge {
+  display: inline-block;
+  background: #1c1800;
+  border: 1px solid #3a3300;
+  color: var(--accent);
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  margin-top: 0.5rem;
+}
