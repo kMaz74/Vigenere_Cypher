@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vigenère Chiffre</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Vigenère <span>Chiffre</span></h1>
+  <p>Polyalphabetische Substitution · Lernziel 5</p>
+</header>
+
+<div class="container">
+
+  <!-- EINGABE CARD -->
+
+  <div class="card">
+    <div class="card-title">Eingabe</div>
+
+```
+<div class="toggle-row">
+  <button class="toggle-btn active" id="encBtn" onclick="setMode('encrypt')">🔒 Verschlüsseln</button>
+  <button class="toggle-btn" id="decBtn" onclick="setMode('decrypt')">🔓 Entschlüsseln</button>
+</div>
+
+<div class="input-row">
+  <div class="field">
+    <label id="inputLabel">Klartext</label>
+    <textarea id="plainInput" rows="3" placeholder="Text eingeben..." oninput="process()"></textarea>
+  </div>
+  <div class="field">
+    <label>Schlüsselwort</label>
+    <input id="keyInput" type="text" placeholder="z.B. GEHEIM" oninput="process()" />
+    <div class="badge" id="keyExpanded"></div>
+  </div>
+</div>
+
+<div class="field">
+  <label id="outputLabel">Geheimtext</label>
+  <div class="output-box empty" id="outputBox">
+    Ergebnis erscheint hier…
+    <button class="copy-btn" onclick="copyResult()">KOPIEREN</button>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- SCHRITT-FÜR-SCHRITT CARD -->
+
+  <div class="card">
+    <div class="card-title">Schritt für Schritt</div>
+    <p class="hint">Jeder Buchstabe mit seinem Schlüsselbuchstaben und dem Ergebnis</p>
+    <div class="steps-grid" id="stepsGrid"></div>
+  </div>
+
+  <!-- VIGENÈRE-TABELLE CARD -->
+
+  <div class="card">
+    <div class="card-title">Vigenère-Tabelle</div>
+    <p class="hint">Klicke auf einen Schritt oben, um die Zeile und Spalte in der Tabelle hervorzuheben.</p>
+    <div class="explain" id="explainBox">
+      Gib einen Text und ein Schlüsselwort ein, um die Visualisierung zu starten.
+    </div>
+    <div class="table-wrapper">
+      <table class="vig-table" id="vigTable"></table>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
